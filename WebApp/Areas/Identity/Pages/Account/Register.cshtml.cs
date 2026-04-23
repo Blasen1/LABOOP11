@@ -101,8 +101,18 @@ public class RegisterModel : PageModel
 
     public class InputModel
     {
+        [Required(ErrorMessage = "Email є обов'язковим")]
+        [EmailAddress(ErrorMessage = "Введіть коректну email адресу")]
         public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Пароль є обов'язковим")]
+        [DataType(DataType.Password)]
+        [StringLength(100, ErrorMessage = "{0} має бути мінімум {2} символи.", MinimumLength = 3)]
         public string Password { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Підтвердження пароля є обов'язковим")]
+        [DataType(DataType.Password)]
+        [Compare("Password", ErrorMessage = "Паролі не співпадають.")]
         public string ConfirmPassword { get; set; } = string.Empty;
     }
 }
