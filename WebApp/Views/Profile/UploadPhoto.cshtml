@@ -1,0 +1,42 @@
+@{
+    ViewData["Title"] = "Завантажити фото";
+}
+
+<div class="upload-form">
+    <h2 style="margin-bottom: 30px; color: var(--primary-green);">📸 Завантажити нове фото</h2>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 12px; border-radius: 5px; margin-bottom: 20px;">
+            @foreach (var modelState in ViewData.ModelState.Values)
+            {
+                @foreach (var error in modelState.Errors)
+                {
+                    <p>@error.ErrorMessage</p>
+                }
+            }
+        </div>
+    }
+
+    <form method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <label for="photo">Виберіть фото:</label>
+            <input type="file" id="photo" name="photo" accept="image/jpeg,image/png,image/gif" required>
+            <small style="color: var(--text-light); display: block; margin-top: 5px;">
+                Дозволені формати: JPG, PNG, GIF (максимум 10MB)
+            </small>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Опис (необов'язково):</label>
+            <textarea id="description" name="description" placeholder="Додайте опис до вашого фото..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Завантажити фото</button>
+        <a href="@Url.Action("Index", "Profile")" style="display: block; text-align: center; margin-top: 15px; color: var(--primary-green); text-decoration: none;">
+            ← Повернутися в профіль
+        </a>
+    </form>
+</div>

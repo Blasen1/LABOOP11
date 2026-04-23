@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PhotoShare</title>
+    <link rel="stylesheet" href="~/css/instagram-style.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PhotoShare</a>
+                    <div style="display: flex; align-items: center; gap: 30px;">
+                        <ul class="navbar-nav" style="display: flex; list-style: none; margin: 0; padding: 0;">
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Стрічка</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Users">Користувачі</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Profile" asp-action="Index">Мій профіль</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Дізнатися більше</a>
+                                </li>
+                            }
+                        </ul>
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <footer style="border-top: 1px solid var(--border-gray); text-align: center; padding: 30px; color: var(--text-light); margin-top: 60px;">
+        <div class="container">
+            <p>&copy; 2026 - PhotoShare | <a href="@Url.Action("Privacy", "Home")" style="color: var(--primary-green); text-decoration: none;">Конфіденційність</a></p>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

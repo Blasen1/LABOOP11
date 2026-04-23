@@ -1,0 +1,54 @@
+@page
+@using WebApp.Areas.Identity.Pages.Account
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Вхід";
+}
+
+<div class="auth-container">
+    <h1 class="auth-title">PhotoShare</h1>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 12px; border-radius: 5px; margin-bottom: 20px;">
+            @foreach (var modelState in ViewData.ModelState.Values)
+            {
+                @foreach (var error in modelState.Errors)
+                {
+                    <p>@error.ErrorMessage</p>
+                }
+            }
+        </div>
+    }
+
+    <form method="post" class="auth-form">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label for="Input_Email">Email:</label>
+            <input type="email" id="Input_Email" asp-for="Input.Email" placeholder="example@gmail.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="Input_Password">Пароль:</label>
+            <input type="password" id="Input_Password" asp-for="Input.Password" placeholder="••••••••" required>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="Input_RememberMe" asp-for="Input.RememberMe">
+            <label for="Input_RememberMe" style="margin: 0;">Запам'ятати мене</label>
+        </div>
+
+        <div class="auth-buttons">
+            <button type="submit" class="auth-submit">Увійти</button>
+        </div>
+    </form>
+
+    <p style="text-align: center; margin-top: 20px; color: var(--text-light);">
+        Не маєте акаунту? <a href="@Url.Page("./Register")" style="color: var(--primary-green); text-decoration: none;">Зареєструйтесь</a>
+    </p>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,31 @@
+@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityUser>
+@{
+    ViewData["Title"] = "Користувачі";
+}
+
+<div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+    <h1 style="color: var(--primary-green); margin-bottom: 30px;">👥 Користувачі</h1>
+
+    @if (!Model.Any())
+    {
+        <div style="text-align: center; padding: 60px 20px; background-color: var(--white); border-radius: 8px;">
+            <p style="color: var(--text-light);">Ще немає користувачів</p>
+        </div>
+    }
+    else
+    {
+        <div class="users-grid">
+            @foreach (var user in Model)
+            {
+                <div class="user-card">
+                    <div class="user-avatar-large">👤</div>
+                    <div class="user-name">@user.UserName</div>
+                    <div class="user-email">@user.Email</div>
+                    <a href="@Url.Action("Index", "Profile", new { userId = user.Id })" class="user-button">
+                        Переглянути профіль
+                    </a>
+                </div>
+            }
+        </div>
+    }
+</div>

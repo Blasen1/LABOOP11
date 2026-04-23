@@ -1,0 +1,100 @@
+﻿@model IEnumerable<WebApp.Models.Photo>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@{
+    ViewData["Title"] = "Стрічка новин";
+    var currentUserId = (string?)ViewBag.CurrentUserId;
+}
+
+<div style="max-width: 1000px; margin: 0 auto; padding: 20px 0;">
+    <h1 style="text-align: center; color: var(--primary-green); margin-bottom: 40px; font-size: 32px;">📱 Фото стрічка</h1>
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <div style="text-align: center; margin-bottom: 30px;">
+            <a href="@Url.Action("UploadPhoto", "Profile")" class="btn-primary">+ Залити фото</a>
+        </div>
+    }
+    else
+    {
+        <div style="background-color: var(--lighter-green); padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 30px;">
+            <p style="margin-bottom: 15px;">Щоб побачити усі фото, будь ласка <strong>увійдіть в акаунт</strong></p>
+            <a href="@Url.Page("/Account/Login", new { area = "Identity" })" class="btn-primary" style="margin-right: 10px;">Вхід</a>
+            <a href="@Url.Page("/Account/Register", new { area = "Identity" })" class="btn-secondary">Реєстрація</a>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div style="text-align: center; padding: 60px 20px; background-color: var(--white); border-radius: 8px;">
+            <h3 style="color: var(--text-light);">Ще немає фото</h3>
+            <p style="color: var(--text-light); margin-top: 10px;">Будьте першими, хто поділиться фото!</p>
+        </div>
+    }
+    else
+    {
+        <div class="photos-grid">
+            @foreach (var photo in Model)
+            {
+                var photoUser = await UserManager.FindByIdAsync(photo.UserId);
+                var isLiked = User.Identity?.IsAuthenticated == true && photo.Likes?.Any(l => l.UserId == currentUserId) == true;
+                
+                <div class="photo-card">
+                    <img src="@photo.ImagePath" alt="Фото" class="photo-image">
+                    <div class="photo-info">
+                        <div class="photo-header">
+                            <a href="@Url.Action("Index", "Profile", new { userId = photo.UserId })" class="photo-author">
+                                @(photoUser?.UserName ?? "Користувач")
+                            </a>
+                        </div>
+                        <div class="photo-date">@photo.CreatedAt.ToString("dd.MM.yyyy HH:mm")</div>
+                        @if (!string.IsNullOrEmpty(photo.Description))
+                        {
+                            <div class="photo-description">@photo.Description</div>
+                        }
+                        <div class="photo-actions">
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <button class="like-button @(isLiked ? "liked" : "")" 
+                                        onclick="likePhoto(@photo.Id, this)"
+                                        title="Лайк">
+                                    ❤️
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="like-button" 
+                                        onclick="alert('Увійдіть в акаунт, щоб лайкнути')"
+                                        title="Лайк">
+                                    ❤️
+                                </button>
+                            }
+                            <span class="like-count" id="like-count-@photo.Id">@photo.Likes?.Count</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<script>
+function likePhoto(photoId, button) {
+    fetch('@Url.Action("LikePhoto", "Profile")', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': '@Html.AntiForgeryToken()'
+        },
+        body: JSON.stringify({ photoId: photoId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            button.classList.toggle('liked');
+            document.getElementById('like-count-' + photoId).textContent = data.likeCount;
+        }
+    })
+    .catch(error => console.error('Помилка:', error));
+}
+</script>

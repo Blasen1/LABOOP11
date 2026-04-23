@@ -1,0 +1,58 @@
+@page
+@using WebApp.Areas.Identity.Pages.Account
+@model RegisterModel
+
+@{
+    ViewData["Title"] = "Реєстрація";
+}
+
+<div class="auth-container">
+    <h1 class="auth-title">PhotoShare</h1>
+    <h2 style="text-align: center; font-size: 18px; color: var(--text-light); margin-bottom: 30px;">Створіть новий акаунт</h2>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 12px; border-radius: 5px; margin-bottom: 20px;">
+            @foreach (var modelState in ViewData.ModelState.Values)
+            {
+                @foreach (var error in modelState.Errors)
+                {
+                    <p>@error.ErrorMessage</p>
+                }
+            }
+        </div>
+    }
+
+    <form method="post" asp-route-returnUrl="@Model.ReturnUrl" class="auth-form">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label for="Input_Email">Email:</label>
+            <input type="email" id="Input_Email" asp-for="Input.Email" placeholder="example@gmail.com" required>
+            <span asp-validation-for="Input.Email" style="color: #e74c3c; font-size: 12px;"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="Input_Password">Пароль:</label>
+            <input type="password" id="Input_Password" asp-for="Input.Password" placeholder="••••••••" required>
+            <span asp-validation-for="Input.Password" style="color: #e74c3c; font-size: 12px;"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="Input_ConfirmPassword">Підтвердіть пароль:</label>
+            <input type="password" id="Input_ConfirmPassword" asp-for="Input.ConfirmPassword" placeholder="••••••••" required>
+            <span asp-validation-for="Input.ConfirmPassword" style="color: #e74c3c; font-size: 12px;"></span>
+        </div>
+
+        <div class="auth-buttons">
+            <button type="submit" class="auth-submit">Зареєструватися</button>
+        </div>
+    </form>
+
+    <p style="text-align: center; margin-top: 20px; color: var(--text-light);">
+        Вже маєте акаунту? <a href="@Url.Page("./Login")" style="color: var(--primary-green); text-decoration: none;">Увійдіть</a>
+    </p>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
