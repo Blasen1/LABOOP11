@@ -1,10 +1,18 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var configuredConnectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var dbPath = Path.Combine(builder.Environment.ContentRootPath, "app.db");
+var connectionString = new SqliteConnectionStringBuilder(configuredConnectionString)
+{
+    DataSource = dbPath
+}.ToString();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -33,19 +41,19 @@ using (var scope = app.Services.CreateScope())
 
     await context.Database.MigrateAsync();
 
-    var ivanExists = await userManager.FindByNameAsync("ivan") != null;
-    var mariaExists = await userManager.FindByNameAsync("maria") != null;
-    var testExists = await userManager.FindByEmailAsync("test@example.com") != null;
+    var ivanExists = await userManager.FindByEmailAsync("ivan@gmail.com") != null;
+    var mariaExists = await userManager.FindByEmailAsync("tana@gmail.com") != null;
+    var testExists = await userManager.FindByEmailAsync("test@gmail.com") != null;
 
     if (!ivanExists)
     {
-        var user1 = new IdentityUser { UserName = "ivan", Email = "ivan@gmail.com" };
+        var user1 = new IdentityUser { UserName = "ivan@gmail.com", Email = "ivan@gmail.com", EmailConfirmed = true };
         await userManager.CreateAsync(user1, "Password123!");
     }
 
     if (!mariaExists)
     {
-        var user2 = new IdentityUser { UserName = "Tana", Email = "tana@gmail.com" };
+        var user2 = new IdentityUser { UserName = "tana@gmail.com", Email = "tana@gmail.com", EmailConfirmed = true };
         await userManager.CreateAsync(user2, "Password123!");
     }
 
