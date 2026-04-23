@@ -52,9 +52,13 @@ public class LoginModel : PageModel
 
         if (ModelState.IsValid)
         {
+            var loginValue = Input.Email.Trim();
+            var user = await _signInManager.UserManager.FindByEmailAsync(loginValue);
+            var userName = user?.UserName ?? loginValue;
+
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-            var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(userName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
             if (result.Succeeded)
             {
                 _logger.LogInformation("User logged in.");

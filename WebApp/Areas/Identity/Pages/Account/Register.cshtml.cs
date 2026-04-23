@@ -54,9 +54,10 @@ public class RegisterModel : PageModel
         if (ModelState.IsValid)
         {
             var user = CreateUser();
+            var email = Input.Email.Trim();
 
-            await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-            await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+            await _userStore.SetUserNameAsync(user, email, CancellationToken.None);
+            await _emailStore.SetEmailAsync(user, email, CancellationToken.None);
             var result = await _userManager.CreateAsync(user, Input.Password);
 
             if (result.Succeeded)
@@ -101,8 +102,18 @@ public class RegisterModel : PageModel
 
     public class InputModel
     {
+        [Required(ErrorMessage = "Email є обов'язковим")]
+        [EmailAddress(ErrorMessage = "Введіть коректну email адресу")]
         public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Пароль є обов'язковим")]
+        [DataType(DataType.Password)]
+        [StringLength(100, ErrorMessage = "{0} має бути мінімум {2} символи.", MinimumLength = 3)]
         public string Password { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Підтвердження пароля є обов'язковим")]
+        [DataType(DataType.Password)]
+        [Compare("Password", ErrorMessage = "Паролі не співпадають.")]
         public string ConfirmPassword { get; set; } = string.Empty;
     }
 }
