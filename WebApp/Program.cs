@@ -35,7 +35,7 @@ using (var scope = app.Services.CreateScope())
 
     var ivanExists = await userManager.FindByEmailAsync("ivan@gmail.com") != null;
     var mariaExists = await userManager.FindByEmailAsync("tana@gmail.com") != null;
-    var testExists = await userManager.FindByEmailAsync("test@example.com") != null;
+    var testExists = await userManager.FindByEmailAsync("test@gmail.com") != null;
 
     if (!ivanExists)
     {
